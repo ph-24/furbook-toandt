@@ -42,7 +42,7 @@ Route::get('/cats/breeds/{name}', function ($name) {
 //Display info cat
 Route::get('/cats/{id}', function ($id) {
   $cat = Furbook\Cat::find($id);
-    //dd($cat);
+//    dd($cat);
   return view('cats.show')->with('cat',$cat);
 })->where('id', '[0-9]+');
 
@@ -52,8 +52,8 @@ Route::get('/cats/create', function () {
 });
 
 Route::post('/cats', function () {
-   // dd(Request::all());
-    $cat = Furbook\Cat::create(Input::all());
+  $cat = Furbook\Cat::create(Input::all());
+        dd(Request::all());
    	return redirect('cats/'.$cat->id)->with('cat',$cat)
     ->withSuccess('Create cat success');
 });
@@ -61,17 +61,20 @@ Route::post('/cats', function () {
 //Update Cat
 Route::get('/cats/{id}/edit', function ($id) {  
   $cat = Furbook\Cat::find($id);
-  return view('cats.edit')->with('cat', $cat);   
+  return view('cats.edit')->with('cat', $cat);
 });
+
 Route::put('/cats/{id}', function ($id) {
-//      echo $id;
-        $cat = Furbook\Cat::find($id);
-//      var_dump(DB::getQueryLog());
-//      dd($cat);
-        $cat->update(Input::all());
-//      dd(DB::getQueryLog());
-        return redirect('cats/'.$cat->id)
-            ->withSuccess('Updater cat success');
+//    echo $id;
+  $cat = Furbook\Cat::find($id);
+//    var_dump(DB::getQueryLog());
+//    dd($cat);
+
+  $cat->update(Input::all());
+//    dd(DB::getQueryLog());
+  return redirect('cats/'.$cat->id)
+  ->withSuccess('Updater cat success');
+
 });
 
 //Delete cat
@@ -88,3 +91,4 @@ Route::get('/cats/{id}/delete', function ($id) {
      return redirect('cats')
          ->withSuccess('Delete cat success');
  });
+ Route::resource ('cat','CatController');
