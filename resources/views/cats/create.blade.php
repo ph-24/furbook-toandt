@@ -1,9 +1,10 @@
+
 @extends ('layouts.master')
 @section ('header')
-	<h2>Edit a cat</h2>
-@endsection
+	<h2>Add a new cat</h2>
+@stop
 @section ('content')
-	{!! Form::model($cat, ['url' => '/cats/'.$cat->id, 'method' =>'put']) !!}
+	{!! Form::open(['url' => '/cats']) !!}
 		@include ('partials.forms.cat')
 	{!! Form::close() !!}
-@endsection
+@stop

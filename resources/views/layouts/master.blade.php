@@ -3,16 +3,16 @@
 <head>
 	<meta charset="utf-8">
 	<title>Furbook</title>
-	<link rel="stylesheet" type="text/css" href="{{asset('css/bootrap.min.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.min.css')}}">
 </head>
 <body>
 	<div class="container">
 		<div class="page-header">
 			@yield('header')
 		</div>
-		@if(Session::has('seccess'))
+		@if(Session::has('success'))
 		<div class="alert alert-success">
-			{{Session::get('seccess')}}
+			{{Session::get('success')}}
 		</div>
 		@endif
 		@yield('content')
