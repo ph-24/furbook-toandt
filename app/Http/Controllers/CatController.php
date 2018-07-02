@@ -28,9 +28,15 @@ class CatController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cats = Cat::all();
+        $perPage = 5;
+        $cats = Cat::paginate($perPage);
+//        dd($cats);
+        if($request->ajax()) {
+//        $cats = Cat::all();
+            return view('partials.cat')->with('cats', $cats);
+        }
         return view('cats/index')->with('cats', $cats);
     }
     /**
