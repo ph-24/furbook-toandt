@@ -29,14 +29,14 @@ Route::get('/cats', function () {
 });
 
 //Display list cat of breed name
-Route::get('/cats/breeds/{name}', function ($name) {
-   $breed = Furbook\Breed::with('cats')
-   ->where('name',$name)
-   ->first();
-   return view('cats.index')
-      ->with('breed',$breed)
-      ->with('cats',$breed->cats);
-});
+//Route::get('/cats/breeds/{name}', function ($name) {
+//   $breed = Furbook\Breed::with('cats')
+//   ->where('name',$name)
+//   ->first();
+//   return view('cats.index')
+//      ->with('breed',$breed)
+//      ->with('cats',$breed->cats);
+//});
 
 
 //Display info cat
@@ -91,4 +91,19 @@ Route::get('/cats/{id}/delete', function ($id) {
      return redirect('cats')
          ->withSuccess('Delete cat success');
  });
- Route::resource ('cat','CatController');
+
+ Route::group(['middleware' =>'auth'], function() {
+     Route::resource ('cat','CatController');
+     //Display list cat of breed name
+     Route::get('/cats/breeds/{name}', function ($name) {
+         $breed = Furbook\Breed::with('cats')
+             ->where('name',$name)
+             ->first();
+         return view('cats.index')
+             ->with('breed',$breed)
+             ->with('cats',$breed->cats);
+     });
+ } );
+
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');

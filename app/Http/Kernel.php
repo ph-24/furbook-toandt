@@ -2,6 +2,7 @@
 
 namespace Furbook\Http;
 
+use Furbook\Http\Middleware\IsAdministrator;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -59,5 +60,6 @@ class Kernel extends HttpKernel
         'guest' => \Furbook\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'admin' => Furbook\Http\Middleware\IsAdministrator::class,
     ];
 }

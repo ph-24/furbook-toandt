@@ -3,11 +3,26 @@
 namespace Furbook\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Furbook\Http\Requests\CatRequest;
 use Furbook\Cat;
 use Validator;
+use Auth;
 
 class CatController extends Controller
 {
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //$this->middleware('auth');
+
+        $this->middleware('admin')->only('destroy');
+
+        //$this->middleware('subscribed')->except('store');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -44,39 +59,43 @@ class CatController extends Controller
 //            'breed_id' => 'required|numeric',
 //            ],
 //            [
-//                'required' => 'Cot :attribute la bat .',
-//                'size' => 'Cot :attribute do dai fai nho hon :size.',
+//                'required' => 'Cot :attribute la  bat .',
+//                'size' => 'Cot :attribute do dai fai nho  hon :size.',
 //                'date_format' => 'Cot :attribute format fai la "YY/mm/dd".',
 //                'numeric' => 'Cot :attribute la la kieu so.',
 //            ]);
         $validator = Validator::make($request->all(),
             [
-            'name' => 'required|max:255',
-            'date_of_birth' => 'required|date_format:"Y-m-d"',
-            'breed_id' => 'required|numeric',
+                'name' => 'required|max:255',
+                'date_of_birth' => 'required|date_format:"Y-m-d"',
+                'breed_id' => 'required|numeric',
             ],
             [
-                'required' => 'Cot :attribute la bat .',
-                'size' => 'Cot :attribute do dai fai nho hon :size.',
-                'date_format' => 'Cot :attribute format fai la "YY/mm/dd".',
-                'numeric' => 'Cot :attribute la la kieu so.',
+                'required' => 'Cột :attribute là bắt buộc.',
+                'max' => 'Cột :attribute độ dài phải nhỏ hơn :size.',
+                'date_format' => 'Cột :attribute định dạng phải là "YYYY/mm/dd".',
+                'numeric' => 'Cột :attribute phải là kiểu số.',
             ]
         );
-        //if data invalid
-        if ($validator->fails()){
+        // If data invalid
+        if ($validator->fails()) {
             return redirect()
-            ->route('cat.create')
-            ->withError($validator)
-            ->withInput();
+                ->route('cat.create')
+                ->withErrors($validator)
+                ->withInput();
         }
-        //Insert Cat
+//        Get user ID
+       $user_id = Auth::user()->id;
+        $request->request->add(['user_id'=>$user_id]);
+        // Insert cat
         $cat = Cat::create($request->all());
-        //redirect back show cat
+        // Redirect back show cat
         return redirect()
             ->route('cat.show', $cat->id)
             ->with('cat', $cat)
             ->withSuccess('Create cat success');
     }
+
     /**
      * Display the specified resource.
      *
@@ -96,16 +115,21 @@ class CatController extends Controller
      */
     public function edit(Cat $cat)
     {
+        if(!Auth::user()->canEdit($cat)){
+            return redirect()
+                ->route('cat.index')
+                ->withErrors('Permission denied');
+        }
         return view('cats.edit')->with('cat', $cat);
     }
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  CatRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cat $cat)
+    public function update(CatRequest $request, Cat $cat)
     {
         $cat->update($request->all());
         return redirect()
@@ -120,6 +144,11 @@ class CatController extends Controller
      */
     public function destroy(Cat $cat)
     {
+        if(!Auth::user()->canEdit($cat)){
+            return redirect()
+                ->route('cat.index')
+                ->withError('Permission denied');
+        }
         $cat->delete();
         return redirect()
             ->route('cat.index')

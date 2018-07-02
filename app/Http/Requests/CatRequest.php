@@ -13,7 +13,7 @@ class CatRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,18 @@ class CatRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required|max:255',
+//            'date_of_birth' => 'required|date_format:"Y-m-d"',
+//            'breed_id' => 'required|numeric',
+        ];
+    }
+    public function messages()
+    {
+        return [
+            'required' => 'Cot :attribute la  bat .',
+//                'size' => 'Cot :attribute do dai fai nho  hon :size.',
+//                'date_format' => 'Cot :attribute format fai la "YY/mm/dd".',
+//                'numeric' => 'Cot :attribute la la kieu so.',
         ];
     }
 }
